@@ -14,6 +14,15 @@ const queryBlock = () => {
   return query
 }
 
+const queryDetailBlock = () => {
+  const query = `SELECT block_number FROM \`${constant.project_id}.${constant.dataset_id}.${constant.tables.block_details}\` order by block_number desc limit 1`;
+  return query;
+};
+
+const queryCountBN = () => {
+  const query = `SELECT block_number FROM \`${constant.project_id}.${constant.dataset_id}.${constant.tables.blocks}\` order by block_number desc limit 1`;
+  return query;
+};
 // run query
 const runQuery = async (query) => {
   const bigquery = await connectToBQ()
@@ -26,4 +35,6 @@ module.exports = {
   connectToBQ,
   queryBlock,
   runQuery,
+  queryDetailBlock,
+  queryCountBN,
 };

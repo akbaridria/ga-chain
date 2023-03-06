@@ -11,6 +11,22 @@ module.exports = Object.freeze({
   bq_key: require("./all-user-key.json"),
   bucket_name: "zksync_era_bucket",
   table_schema: {
+    block_details: {
+      fields: [
+        { name: "timestamp", type: "INTEGER" },
+        { name: "block_number", type: "INTEGER" },
+        { name: "status", type: "STRING" },
+        { name: "commit_tx_hash", type: "STRING" },
+        { name: "committed_at", type: "TIMESTAMP" },
+        { name: "execute_tx_hash", type: "STRING" },
+        { name: "executed_at", type: "TIMESTAMP" },
+        { name: "l1_tx_count", type: "INTEGER" },
+        { name: "l2_tx_count", type: "INTEGER" },
+        { name: "prove_tx_hash", type: "STRING" },
+        { name: "proven_at", type: "TIMESTAMP" },
+        { name: "root_hash", type: "STRING" },
+      ],
+    },
     transactions: {
       fields: [
         { name: "timestamp", type: "INTEGER" },
