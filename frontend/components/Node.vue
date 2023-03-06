@@ -10,7 +10,7 @@
           :name="`caret-${open ? 'down' : 'forward'}-outline`"
         ></ion-icon>
       </div>
-      <div class="flex items-center gap-x-1">
+      <div class="flex items-center gap-x-1 font-bold">
         <ion-icon name="albums"></ion-icon>{{ title }}
       </div>
     </div>
@@ -53,7 +53,7 @@ export default {
     },
   },
   data() {
-    const open = false;
+    const open = true;
     return {
       open,
     };

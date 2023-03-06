@@ -5,7 +5,7 @@
         <div class="border-b-[1px] p-2 font-bold opacity-75">Data Explorer</div>
         <div class="relative h-full overflow-auto border-r-[1px]">
           <div class="absolute">
-            <div class="p-2 mt-3 flex flex-col gap-3 text-sm font-bold">
+            <div class="p-2 mt-3 flex flex-col gap-3 text-sm">
               <div class="flex gap-x-2 items-center cursor-pointer">
                 <div
                   class="p-[2px] w-fit rounded-full hover:bg-gray-300/50 transition-all"
@@ -16,8 +16,9 @@
                     :name="`caret-down-outline`"
                   ></ion-icon>
                 </div>
-                <div class="flex items-center gap-x-1">
-                  <ion-icon name="layers"></ion-icon>zkSync_era_mainnet
+                <div class="flex items-center gap-x-1 font-bold">
+                  <ion-icon name="layers"></ion-icon>
+                  <div>zkSync_era_mainnet</div>
                 </div>
               </div>
               <Node
