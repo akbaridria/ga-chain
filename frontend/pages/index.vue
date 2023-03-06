@@ -1,134 +1,181 @@
 <template>
-  <div class="bg-slate-700 h-[90%] w-full p-3 rounded-xl">
-    <div class="h-[40%] bg-slate-800 rounded-lg shadow-md p-5 text-sm flex">
-      <client-only>
-        <codemirror
-          class="codemirror flex-1"
-          v-model="code"
-          :options="cmOption"
-          ref="basic"
-        />
-      </client-only>
-      <div class="flex-none ml-2">
-        <div
-          class="p-2 cursor-pointer shadow-md bg-blue-800 rounded-full hover:brightness-[0.8] transition-all"
-          @click="run()"
-        >
-          <ion-icon
-            class="flex items-center justify-center"
-            name="play"
-          ></ion-icon>
+  <div class="flex flex-col">
+    <div class="flex flex-auto">
+      <div class="relative flex-none flex flex-col min-w-[17rem]">
+        <div class="border-b-[1px] p-2 font-bold opacity-75">Data Explorer</div>
+        <div class="relative h-full overflow-auto border-r-[1px]">
+          <div class="absolute">
+            <div class="p-2 mt-3 flex flex-col gap-3 text-sm font-bold">
+              <div class="flex gap-x-2 items-center cursor-pointer">
+                <div
+                  class="p-[2px] w-fit rounded-full hover:bg-gray-300/50 transition-all"
+                >
+                  <ion-icon
+                    :key="open"
+                    class="flex items-center justify-center text-black"
+                    :name="`caret-down-outline`"
+                  ></ion-icon>
+                </div>
+                <div class="flex items-center gap-x-1">
+                  <ion-icon name="layers"></ion-icon>zkSync_era_mainnet
+                </div>
+              </div>
+              <Node
+                class="px-[calc(2px_+_0.5rem)]"
+                v-for="(item, index) in Object.keys(table_schema)"
+                :key="index"
+                :title="item"
+                :data="table_schema[item].fields"
+              />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="h-[60%] bg-slate-800 rounded-lg shadow-md mt-1 p-5">
-      <ul
-        class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400"
-      >
-        <li class="mr-2">
-          <div
-            aria-current="page"
-            class="inline-block p-2 bg-gray-700 rounded-t-lg active"
-          >
-            Query Result
-          </div>
-        </li>
-      </ul>
-      <div v-if="loading" class="flex items-center justify-center h-[100%]" >
-        <LoaderSpin/>
-      </div>
-      <div v-if="!loading && error !== ''" class="flex items-center justify-center h-[100%]">
-        <div class="text-sm text-red-600">{{ error }}</div>
-      </div>
-      <div v-if="!loading && error === '' && result.length === 0" class="flex items-center justify-center h-[100%]">
-        <div class="text-sm">no data</div>
-      </div>
-      <div v-if="result.length > 0 && !loading" class="flex justify-end mt-2">
-        <div @click="download" class="text-sm cursor-pointer hover:underline">Download as CSV</div>
-      </div>
-      <div v-if="result.length > 0 && !loading" class="overflow-auto h-[75%] mt-4">
-        <table
-          class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
-        >
-          <thead
-            class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-          >
-            <tr>
-              <th v-for="(item, index) in Object.keys(result[0])" :key="index" scope="col" class="p-2">{{ item }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(item, index) in result"
-              :key="index"
-              class="bg-white border-b dark:bg-slate-800 dark:border-gray-700"
+      <div class="relative flex-1 flex flex-col">
+        <div class="flex-none border-b-[1px] border-l-[1px] p-2">
+          <div class="flex justify-end">
+            <div
+              class="p-1 cursor-pointer w-fit shadow-md bg-blue-800 rounded-full hover:brightness-[0.8] transition-all"
+              @click="run()"
             >
-              <td v-for="(item2, index2) in Object.keys(item)" :key="index2" class="p-2">{{ item[item2] }}</td>
-              <!-- <td class="px-6 py-4">Laptop</td>
-              <td class="px-6 py-4">$2999</td> -->
-            </tr>
-          </tbody>
-        </table>
+              <ion-icon
+                class="flex items-center justify-center text-white"
+                name="play"
+              ></ion-icon>
+            </div>
+          </div>
+        </div>
+        <div class="flex-1 relative">
+          <div id="editor" class="absolute h-full w-full" />
+        </div>
+        <div class="flex-1 flex flex-col" id="resut">
+          <div class="border-y-[1px] flex-none flex items-center justify-between p-2">
+            <div>Query Result</div>
+            <div class="flex justify-end p-2">
+              <div
+                v-if="result.length > 0 && !loading"
+                class="text-sm cursor-pointer gap-x-2 flex items-center text-blue-600 rounded-lg hover:bg-gray-300/50 px-2 py-1"
+                @click="downloadData"
+              >
+                <ion-icon
+                  class="text-base"
+                  name="cloud-download-outline"
+                ></ion-icon>
+                <div>
+                  DOWNLOAD AS CSV
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="loading" class="flex items-center justify-center h-[100%]">
+            <LoaderSpin />
+          </div>
+          <div
+            v-if="!loading && error !== ''"
+            class="flex items-center justify-center h-[100%]"
+          >
+            <div class="text-sm text-red-600">{{ error }}</div>
+          </div>
+          <div
+            v-if="!loading && error === '' && result.length === 0"
+            class="flex items-center justify-center h-[100%]"
+          >
+            <div class="text-sm">no data</div>
+          </div>
+          <div class="relative p-2 flex-1 overflow-auto">
+            <div class="absolute w-full h-full">
+              <table
+                v-if="result && result.length > 0"
+                class="text-sm text-left text-gray-500 dark:text-gray-400"
+              >
+                <thead
+                  class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                >
+                  <tr>
+                    <th
+                      v-for="(item, index) in Object.keys(result[0])"
+                      :key="index"
+                      scope="col"
+                      class="p-2"
+                    >
+                      {{ item }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(item, index) in result"
+                    :key="index"
+                    class="bg-white border-b dark:bg-slate-800 dark:border-gray-700"
+                  >
+                    <td
+                      v-for="(item2, index2) in Object.keys(item)"
+                      :key="index2"
+                      class="p-2"
+                    >
+                      {{ item[item2] }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import "codemirror/mode/sql/sql.js";
+import { basicSetup } from "codemirror";
+import { EditorView, keymap } from "@codemirror/view";
+import { indentWithTab } from "@codemirror/commands";
+import { sql } from "@codemirror/lang-sql";
+import { defaultCode, table_schema, downloadCsv } from "../utils/helper";
 import { runQuery } from "../utils/bq";
-import { defaultCode, downloadCsv } from "../utils/helper"
 
 export default {
   name: "IndexPage",
   data() {
     return {
-      cmOption: {
-        tabSize: 2,
-        styleActiveLine: true,
-        lineNumbers: true,
-        line: true,
-        mode: "text/x-mysql",
-        theme: "base16-dark",
-        keyMap: "default",
-      },
-      code: defaultCode,
-      result: [],
+      host: window.location.origin,
+      table_schema,
+      defaultCode,
+      view: null,
       loading: false,
-      error: ''
+      result: [],
+      error: "",
     };
   },
-  mounted() {},
+  mounted() {
+    this.view = new EditorView({
+      doc: defaultCode,
+      extensions: [basicSetup, keymap.of([indentWithTab]), sql()],
+      parent: document.getElementById("editor"),
+    });
+  },
   methods: {
     async run() {
-       this.loading = true
+      console.log("oke gan disini");
+      this.loading = true;
       try {
-        const d = await runQuery(this.code);
-        this.result = d 
-        this.error = ''
+        const d = await runQuery(this.view.state.doc.toString());
+        this.result = d;
+        this.error = "";
       } catch (error) {
-        this.error = error.message
+        this.error = error.message;
       }
-      this.loading = false
+      this.loading = false;
     },
-    download(){
-      downloadCsv(this.result)
-    }
+    async downloadData() {
+      console.log(this.result);
+      await downloadCsv(this.result);
+    },
   },
 };
 </script>
 <style>
-.CodeMirror {
-  height: 100%;
-  background: none !important;
-}
-.CodeMirror-gutters {
-  background: none !important;
-}
-.CodeMirror-activeline-background {
-  background: none !important;
-}
-.vue-codemirror {
+.cm-editor {
   height: 100%;
 }
 </style>

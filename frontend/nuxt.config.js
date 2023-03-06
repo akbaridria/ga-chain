@@ -18,14 +18,10 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [
-    "@/assets/css/main.css",
-    "codemirror/lib/codemirror.css",
-    "codemirror/theme/base16-dark.css",
-  ],
+  css: ["@/assets/css/main.css"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [{ src: "~plugins/nuxt-codemirror-plugin", ssr: false }],
+  plugins: [],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,

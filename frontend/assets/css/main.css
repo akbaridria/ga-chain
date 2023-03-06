@@ -6,10 +6,15 @@
 @layer base {
   html {
     font-family: 'Raleway', sans-serif;
+    height: 100%;
   }
 
+  body {
+    height: 100%;
+  }
   ::-webkit-scrollbar {
-    width: 5px;
+    width: 2px;
+    height: 6px;
   }
   
   /* Track */
