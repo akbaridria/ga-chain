@@ -7,7 +7,8 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "rollup": "rollup -c"
+    "rollup": "rollup -c",
+    "firebase:deploy": "nuxt generate && firebase deploy --only hosting"
   },
   "dependencies": {
     "@codemirror/lang-sql": "^6.4.0",

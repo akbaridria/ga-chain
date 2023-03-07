@@ -21,7 +21,9 @@ function convertToCSV(data) {
 
 export const downloadCsv = async (items) => {
   const csv = await convertToCSV(items);
-  let file = new File([csv], "test.csv", { type: "text/csv;charset=utf-8" });
+  let file = new File([csv], "ga-chain-result.csv", {
+    type: "text/csv;charset=utf-8",
+  });
   await saveAs(file);
 };
 

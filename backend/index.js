@@ -3,15 +3,15 @@ const rateLimit = require("express-rate-limit");
 const bq = require("./bq");
 
 const apiLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 1,
+  windowMs: 24 * 60 * 60 * 1000,
+  max: 10000,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
 app.use(apiLimiter);
 
-app.post("/query", async (req, res) => {
+app.get("/query", async (req, res) => {
   const result = await bq.runQuery(req.query.query);
   res.send(result);
 });
