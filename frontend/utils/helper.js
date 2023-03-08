@@ -15,7 +15,6 @@ function convertToCSV(data) {
   let values = data.map((o) => Object.values(o).join(",")).join("\n");
 
   csv += header + "\n" + values;
-  console.log(csv);
   return csv;
 }
 
