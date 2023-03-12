@@ -107,3 +107,5 @@ dist
 .DS_Store
 
 all-user-key.json
+
+ga-chain-key.json

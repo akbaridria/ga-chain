@@ -14,7 +14,19 @@ export default {
       { hid: "description", name: "description", content: "" },
       { name: "format-detection", content: "telephone=no" },
     ],
-    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+    link: [{ rel: "icon", type: "image/x-icon", href: "/logo ga-chain.png" }],
+    script: [
+      {
+        src: "https://accounts.google.com/gsi/client",
+        async: true,
+      },
+      {
+        src: "https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js",
+      },
+      {
+        src: "https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js",
+      },
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -27,10 +39,10 @@ export default {
   components: true,
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-  buildModules: [],
+  buildModules: ["@nuxtjs/dotenv"],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [],
+  modules: ["@nuxtjs/axios"],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
@@ -50,5 +62,10 @@ export default {
         tls: "empty",
       };
     },
+  },
+  publicRuntimeConfig: {
+    gClientID: process.env.G_CLIENT_ID,
+    gSecredId: process.env.G_CLIENT_SECRET,
+    base_url: "https://querybq-buzpivkitq-uc.a.run.app/",
   },
 };

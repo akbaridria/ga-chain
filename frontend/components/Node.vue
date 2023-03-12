@@ -6,11 +6,11 @@
       >
         <ion-icon
           :key="open"
-          class="flex items-center justify-center text-black"
+          class="flex items-center justify-center text-black dark:text-white"
           :name="`caret-${open ? 'down' : 'forward'}-outline`"
         ></ion-icon>
       </div>
-      <div class="flex items-center gap-x-1 font-bold">
+      <div class="flex items-center gap-x-1">
         <ion-icon name="albums"></ion-icon>{{ title }}
       </div>
     </div>
@@ -25,7 +25,7 @@
           class="p-[2px] w-fit rounded-full hover:bg-gray-300/50 transition-all"
         >
           <ion-icon
-            class="flex items-center justify-center text-black"
+            class="flex items-center justify-center text-black dark:text-white"
             :name="`menu`"
           ></ion-icon>
         </div>
@@ -53,7 +53,7 @@ export default {
     },
   },
   data() {
-    const open = true;
+    const open = false;
     return {
       open,
     };
