@@ -331,9 +331,16 @@ export default {
     async run() {
       this.loading = true;
       try {
-        const d = await runQuery(this.view.state.doc.toString());
-        this.result[this.getIndexTab].data = d;
-        this.result[this.getIndexTab].error = "";
+        const params = {
+          query: this.view.state.doc.toString()
+        }
+        const raw = await this.$axios.$get(this.$config.base_url + 'query-playground', { params })
+        if(!raw.error) {
+          this.result[this.getIndexTab].data = raw.data
+          this.result[this.getIndexTab].error = ''
+        } else {
+          this.result[this.getIndexTab].error = raw.message
+        }
       } catch (error) {
         this.result[this.getIndexTab].error = error.message;
       }

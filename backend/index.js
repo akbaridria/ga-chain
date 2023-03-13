@@ -18,10 +18,30 @@ const apiLimiter = rateLimit({
   },
 });
 
-app.use("/query", apiLimiter);
-app.use(cors({ origin: "*" }));
+const whiteListPlayground = [
+  "http://localhost:3000",
+  "https://gachain-playground.web.app",
+  "https://gachain-playground.firebaseapp.com",
+];
 
-app.get("/query", async (req, res) => {
+const corsPlayground = {
+  origin: function (origin, callback) {
+    if (whiteListPlayground.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+
+const corsOthers = {
+  origin: "*",
+};
+
+app.use("/query", apiLimiter);
+app.use(cors());
+
+app.get("/query", cors(corsOthers), async (req, res) => {
   let token = req.get("token");
   let query = req.query.query;
   let result = null;
@@ -68,7 +88,7 @@ app.get("/query", async (req, res) => {
   });
 });
 
-app.post("/check-session", async (req, res) => {
+app.post("/check-session", cors(corsPlayground), async (req, res) => {
   let email = "";
   let access_token = "";
   let timestamp = Math.floor(Date.now() / 1000);
@@ -110,7 +130,24 @@ app.post("/check-session", async (req, res) => {
   });
 });
 
-app.post("/check-login", async (req, res) => {
+app.get("/query-playground", cors(corsPlayground), async (req, res) => {
+  const query = req.query.query;
+  try {
+    const data = await bq.runQuery(query);
+    return res.send({
+      error: false,
+      message: "success",
+      data: data,
+    });
+  } catch (error) {
+    return res.send({
+      error: true,
+      message: error.message,
+    });
+  }
+});
+
+app.post("/check-login", cors(corsPlayground), async (req, res) => {
   let login = false;
   let token = null;
   if (req.body.email) {
