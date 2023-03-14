@@ -7,29 +7,8 @@
         <div class="border-b-[1px] p-2 font-bold opacity-75 dark:border-gray-600">Data Explorer</div>
         <div class="relative h-full overflow-auto border-r-[1px] dark:border-gray-600">
           <div class="absolute">
-            <div class="p-2 mt-3 flex flex-col gap-3 text-sm">
-              <div class="flex gap-x-2 items-center cursor-pointer">
-                <div
-                  class="p-[2px] w-fit rounded-full hover:bg-gray-300/50 transition-all"
-                >
-                  <ion-icon
-                    class="flex items-center justify-center text-black dark:text-white"
-                    :name="`caret-down-outline`"
-                  ></ion-icon>
-                </div>
-                <div class="flex items-center gap-x-1">
-                  <ion-icon name="layers"></ion-icon>
-                  <div>zkSync_era_mainnet</div>
-                </div>
-              </div>
-              <Node
-                class="px-[calc(2px_+_0.5rem)]"
-                v-for="(item, index) in Object.keys(table_schema)"
-                :key="index"
-                :title="item"
-                :data="table_schema[item].fields"
-              />
-            </div>
+            <ParentNode :tableSchema="table_schema" datasetName="zkSync_era_mainnet" />
+            <ParentNode :tableSchema="table_schema_mantle_testnet" datasetName="mantle_testnet" />
           </div>
         </div>
       </div>
@@ -200,7 +179,7 @@ import { basicSetup } from "codemirror";
 import { EditorView, keymap } from "@codemirror/view";
 import { indentWithTab } from "@codemirror/commands";
 import { sql } from "@codemirror/lang-sql";
-import { defaultCode, table_schema, downloadCsv } from "../utils/helper";
+import { defaultCode, table_schema, downloadCsv, table_schema_mantle_testnet } from "../utils/helper";
 import { runQuery } from "../utils/bq";
 import skipForwardVue from '../assets/icons/skip-forward.vue';
 import skipBackVue from '../assets/icons/skip-back.vue';
@@ -231,6 +210,7 @@ export default {
     return {
       host: window.location.origin,
       table_schema,
+      table_schema_mantle_testnet,
       defaultCode,
       view: null,
       loading: false,
@@ -330,6 +310,7 @@ export default {
     },
     async run() {
       this.loading = true;
+      this.currentPage = 1
       try {
         const params = {
           query: this.view.state.doc.toString()

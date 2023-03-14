@@ -104,7 +104,7 @@ async function extractTransactionAndLogs(listTx) {
     for (let i = 0; i < listTx.length; i++) {
       tempMethod.push([listTx[i].tx.hash]);
     }
-
+    console.log(tempMethod);
     const listReceipt = await fetchRpc(
       pushMethod(tempMethod, "eth_getTransactionReceipt")
     );
@@ -153,6 +153,24 @@ async function extractTransactionAndLogs(listTx) {
     extractTx: tempTx,
     extractLogs: tempLogs,
   };
+}
+
+async function extractTransfer(start_number, end_number) {
+  for (let i = 0; i < listTx.length; i++) {
+    tempMethod.push([
+      {
+        fromBlock: start_number,
+        toBlock: end_number,
+        topics: [
+          "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        ],
+      },
+    ]);
+  }
+
+  const listReceipt = await fetchRpc(
+    pushMethod(tempMethod, "eth_getTransactionReceipt")
+  );
 }
 
 async function extractTokenTransfers(logs) {
@@ -269,8 +287,11 @@ async function mainFunction() {
   const end_block = start_block + blockPerCrawl;
 
   const d = await extractBlocks(start_block, end_block);
+  console.log(1);
   const e = await extractTransactionAndLogs(d.listTx);
+  console.log(2);
   const f = await extractTokenTransfers(e.extractLogs);
+  console.log(3);
   // insert to google storage
   if (d.extractBlocks.length > 0)
     await helper.saveToStorage(
