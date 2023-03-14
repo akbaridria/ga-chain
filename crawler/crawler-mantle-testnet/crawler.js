@@ -9,7 +9,7 @@ const abi = require("./erc20.abi.json");
 const provider = new ethers.providers.JsonRpcProvider(constant.rpc_url);
 
 // total block index per crawling
-const blockPerCrawl = 1000;
+const blockPerCrawl = 2000;
 
 // convert number to hex
 function convertNumberToHex(numb) {
@@ -161,7 +161,8 @@ async function extractTokenTransfers(logs) {
   for (let i = 0; i < logs.length; i++) {
     if (
       logs[i].topics[0] ===
-      "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef" &&
+      logs[i].topics.length >= 3
     ) {
       tempTokenTransfer.push({
         timestamp: logs[i].timestamp,
@@ -177,9 +178,15 @@ async function extractTokenTransfers(logs) {
           ["address"],
           logs[i].topics[2]
         )[0],
-        value: (
-          await ethers.utils.defaultAbiCoder.decode(["uint"], logs[i].data)[0]
-        ).toString(),
+        value:
+          logs[i].data === "0x"
+            ? 0
+            : (
+                await ethers.utils.defaultAbiCoder.decode(
+                  ["uint"],
+                  logs[i].data
+                )[0]
+              ).toString(),
         transaction_index: logs[i].transaction_index,
         log_index: logs[i].log_index,
       });
@@ -237,6 +244,7 @@ async function extractContracts(listTx) {
         const name = await contract.name();
         const symbol = await contract.symbol();
         const decimals = await contract.decimals();
+        console.log(name, symbol, decimals);
         tempToken.push({
           contract_address: listTx[i].contract_address,
           name: name,
@@ -260,12 +268,9 @@ async function mainFunction() {
       : 1;
   const end_block = start_block + blockPerCrawl;
 
-  // extract data
   const d = await extractBlocks(start_block, end_block);
   const e = await extractTransactionAndLogs(d.listTx);
   const f = await extractTokenTransfers(e.extractLogs);
-  // const g = await extractInternalTransactions(e.extractTx);
-  const h = await extractContracts(e.extractTx);
   // insert to google storage
   if (d.extractBlocks.length > 0)
     await helper.saveToStorage(
@@ -286,11 +291,6 @@ async function mainFunction() {
     await helper.saveToStorage(
       new Buffer.from(f.map(JSON.stringify).join("\n")),
       "token_transfers"
-    );
-  if (h.length > 0)
-    await helper.saveToStorage(
-      new Buffer.from(h.map(JSON.stringify).join("\n")),
-      "erc20_token"
     );
 }
 
