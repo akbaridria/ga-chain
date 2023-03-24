@@ -5,7 +5,7 @@ SELECT
   CAST(DATE(TIMESTAMP_SECONDS(timestamp)) AS STRING) as date,
   count(distinct from_address) as total
 FROM
-  \`ga-chain.zkSync_era_mainnet.transactions\`
+  \`ga-chain.mantle_testnet.transactions\`
 group by 1
 order by 1`;
 
