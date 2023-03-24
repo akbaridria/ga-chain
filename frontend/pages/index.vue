@@ -7,7 +7,7 @@
         <div class="border-b-[1px] p-2 font-bold opacity-75 dark:border-gray-600">Data Explorer</div>
         <div class="relative h-full overflow-auto border-r-[1px] dark:border-gray-600">
           <div class="absolute">
-            <ParentNode :tableSchema="table_schema" datasetName="zkSync_era_mainnet" />
+            <!-- <ParentNode :tableSchema="table_schema" datasetName="zkSync_era_mainnet" /> -->
             <ParentNode :tableSchema="table_schema_mantle_testnet" datasetName="mantle_testnet" />
           </div>
         </div>
